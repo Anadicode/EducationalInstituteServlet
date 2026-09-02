@@ -1,0 +1,133 @@
+package servlet;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import Model.Student;
+import Service.studentService;
+
+
+@WebServlet("/student/*")
+public class student extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		System.out.println("in the servlet ");
+		String pathString = request.getPathInfo();
+		
+		if(pathString == null || pathString.equals("/student")){
+			
+			List<Student> students = new ArrayList<>();
+			studentService student = new studentService();
+			
+			
+			students = student.getAllStudents();		
+		     for(var e : students) {
+				System.out.println(e.getAddressString());
+			}
+		     
+			
+			request.setAttribute("students", students);
+
+					
+			RequestDispatcher rd = request.getRequestDispatcher("/student.jsp");
+			 rd.forward(request, response);
+		}else if(pathString.equals("/ragister")) {
+			
+			 RequestDispatcher rd = request.getRequestDispatcher("/studentRagistration.jsp");
+			 rd.forward(request, response);
+		}
+		
+		
+		
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		  
+		  String pathString = request.getPathInfo();
+		  
+		  if(pathString == null || pathString.equals("/student")) {
+			  int id = Integer.parseInt(request.getParameter("delete"));
+			  
+			  
+			  studentService student = new studentService();
+			  
+			  student.deleteAstudentById(id);
+			  response.sendRedirect(request.getContextPath()+"/student");
+			  
+		  }else if(pathString.equals("/ragister")) {
+			  
+			  
+			  
+			  // Get data from form
+		        int id = Integer.parseInt(request.getParameter("stId"));
+
+		        String name = request.getParameter("name");
+
+		        String phNumber = request.getParameter("phone");
+
+		        String addressString = request.getParameter("address");
+
+		        int age = Integer.parseInt(request.getParameter("age"));
+
+		        String emailString = request.getParameter("email");
+
+		        String collageNameString = request.getParameter("collegeName");
+
+		        String streamString = request.getParameter("stream");
+
+		        int sub_id = Integer.parseInt(request.getParameter("sId"));
+
+		        int T_id = Integer.parseInt(request.getParameter("tId"));
+
+		        int B_id = Integer.parseInt(request.getParameter("bId"));
+
+
+		        // Create Student object
+		        Student student = new Student();
+
+		        student.setId(id);
+		        student.setName(name);
+		        student.setPhNumber(phNumber);
+		        student.setAddressString(addressString);
+		        student.setAge(age);
+		        student.setEmailString(emailString);
+		        student.setCollageNameString(collageNameString);
+		        student.setStreamString(streamString);
+
+		        student.setT_id(T_id);
+		        student.setSub_id(sub_id);
+		        student.setB_id(B_id);
+
+
+		        // Call service
+		        studentService service = new studentService();
+
+		        service.addStudent(student);
+
+		        // Redirect after successful insertion
+		        response.sendRedirect(request.getContextPath() + "/student");
+		  }
+		   
+		  
+		  
+	}
+	
+	/// Student ragistration
+	
+	  private void studentRagistration(HttpServletRequest request, HttpServletResponse response) {
+		  
+	  }
+	
+	
+
+}
